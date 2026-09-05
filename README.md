@@ -6,23 +6,11 @@ Kho lưu trữ các bài thực hành, nghiên cứu thực nghiệm và đồ �
 
 ## 📂 Danh mục bài toán & Dự án
 
-| Ngày / Chuyên đề | Thư mục | Mô tả bài toán | Công nghệ / Mô hình | Kết quả tiêu biểu |
-|---|---|---|---|---|
-| **Day 1** | [Day1/vn-traffic-yolo26-vs-rtdetr](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Traffic Benchmark**: So sánh thực nghiệm phát hiện phương tiện giao thông tại Việt Nam | **YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L**, PyTorch, Ultralytics | YOLO26s: **92.3 FPS**, 19 MB; RT-DETR: **43.8% mAP50-95** |
+| Ngày / Chuyên đề | Thư mục | Mô tả bài toán | Công nghệ / Mô hình |
+|---|---|---|---|
+| **Day 1** | [Day1/vn-traffic-yolo26-vs-rtdetr](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Traffic Benchmark**: So sánh thực nghiệm toàn diện phát hiện phương tiện giao thông tại Việt Nam | **YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L**, PyTorch, Ultralytics, Roboflow |
 
----
-
-### 📊 Điểm nhấn Benchmark Day 1: Trade-off giữa YOLO26s và RT-DETR-L
-
-<p align="center">
-  <img src="Day1/vn-traffic-yolo26-vs-rtdetr/docs/images/overall_metrics.png" width="48%" />
-  <img src="Day1/vn-traffic-yolo26-vs-rtdetr/docs/images/accuracy_speed_tradeoff.png" width="48%" />
-</p>
-
-| Model | mAP50-95 | mAP50 | Precision | Recall | FPS (Batch=1) | Peak VRAM | Params |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **YOLO26s** | `0.4018` | `0.5335` | **`0.7852`** | `0.5191` | **`92.26 FPS`** | **`376 MB`** | **`9.95 M`** |
-| **RT-DETR-L** | **`0.4376`** | **`0.5632`** | `0.7313` | **`0.5663`** | `21.09 FPS` | `1034 MB` | `32.82 M` |
+> 📌 *Toàn bộ báo cáo chi tiết, số liệu benchmark và biểu đồ đối đầu thực nghiệm được trình bày tại [Day 1 README](Day1/vn-traffic-yolo26-vs-rtdetr/README.md).*
 
 ---
 
