@@ -31,8 +31,9 @@ Kho lưu trữ các bài thực hành, nghiên cứu thực nghiệm và đồ �
 | 🏋️ **YOLO26m** | Balanced Accuracy | 21.79 M | 42.00 MB | 728 MB | 38.55 FPS | `53.50%` | `40.13%` |
 | 🛡️ **RT-DETR-L** | Transformer Server | 32.82 M | 63.18 MB | 1034 MB | 21.09 FPS | **`56.32%`** | **`43.76%`** |
 
-> 📌 *Xem toàn bộ biểu đồ đường cong huấn luyện, ma trận nhầm lẫn, phân tích 8 lớp phương tiện và hướng dẫn triển khai tại:*  
-> 👉 [**Day 1 Full Documentation & Benchmark Report 📑**](Day1/vn-traffic-yolo26-vs-rtdetr/README.md)
+> 📌 *Tài liệu & Báo cáo chuyên sâu:*  
+> 👉 [**Day 1 Full Documentation & Benchmark Report 📑**](Day1/vn-traffic-yolo26-vs-rtdetr/README.md)  
+> 📄 [**Báo cáo nghiên cứu kiến trúc YOLO26 (19 trang PDF)**](Day1/Bao_cao_Nghien_cuu_YOLO26.pdf)
 
 ---
 

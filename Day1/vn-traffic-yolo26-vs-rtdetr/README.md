@@ -4,6 +4,7 @@
 [![Ultralytics](https://img.shields.io/badge/ultralytics-8.4.139-green.svg)](https://github.com/ultralytics/ultralytics)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C.svg)](https://pytorch.org/)
 [![Dataset: Roboflow](https://img.shields.io/badge/dataset-Roboflow%20Universe-purple.svg)](https://universe.roboflow.com/jinkun1998s-workspace/vietnam-vehicle-detection-nt45b)
+[![Report: PDF](https://img.shields.io/badge/Report-PDF%20(19%20pages)-red.svg)](../Bao_cao_Nghien_cuu_YOLO26.pdf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Dự án thực nghiệm phát hiện phương tiện giao thông (Vehicle Detection) end-to-end so sánh giữa các biến thể thuộc họ **YOLO26** (kiến trúc CNN one-stage mới nhất) với **RT-DETR-L** (Real-Time Detection Transformer):
@@ -386,6 +387,8 @@ artifacts/reports/
 ├── val_runs/                         # Đường cong PR, F1, ma trận nhầm lẫn của từng model
 └── qualitative/                      # Ảnh side-by-side & failure cases theo từng model
 ```
+
+> 📄 **Báo cáo nghiên cứu đính kèm**: [Bao_cao_Nghien_cuu_YOLO26.pdf](../Bao_cao_Nghien_cuu_YOLO26.pdf) (19 trang nghiên cứu chuyên sâu về kiến trúc YOLO26 và bối cảnh giám sát giao thông Việt Nam).
 
 ---
 
