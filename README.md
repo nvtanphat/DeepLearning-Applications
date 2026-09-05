@@ -15,14 +15,14 @@ Kho lưu trữ các bài thực hành, nghiên cứu thực nghiệm và đồ �
 
 | Ngày / Chuyên đề | Dự án | Mô tả bài toán & Điểm nhấn kỹ thuật | Trạng thái |
 |:---:|---|---|:---:|
-| **Day 1** | [**VN Traffic: YOLO26 vs RT-DETR-L**](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Traffic Benchmark**: Đối đầu thực nghiệm giữa họ YOLO26 (Nano/Small/Medium) và RT-DETR-L trên giao thông thực tế Việt Nam. Đo đạc đa chiều Trade-off (mAP, FPS, VRAM, Params). | <kbd>✅ Hoàn thành</kbd> |
+| **Day 1** | [**Vietnam Vehicle Detection — YOLO26 vs RT-DETR-L**](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Vehicle Detection**: Đối đầu thực nghiệm phát hiện phương tiện giao thông giữa họ YOLO26 (Nano/Small/Medium) và RT-DETR-L trên điều kiện thực tế Việt Nam. Đo đạc đa chiều Trade-off (mAP, FPS, VRAM, Params). | <kbd>✅ Hoàn thành</kbd> |
 | **Day 2** | *Đang cập nhật...* | *Bài toán tiếp theo trong chuỗi Deep Learning Applications.* | <kbd>⏳ Sắp ra mắt</kbd> |
 
 ---
 
 ## 🌟 Điểm nhấn kết quả nổi bật — Day 1 Benchmark
 
-Đối đầu 4 mô hình trên tập **Test Split độc lập (740 ảnh giao thông Việt Nam)** chạy trên GPU Nvidia Tesla T4:
+Đối đầu 4 mô hình trên tập **Test Split độc lập (740 ảnh phương tiện giao thông Việt Nam)** chạy trên GPU Nvidia Tesla T4:
 
 | Mô hình | Phân khúc | Params | Checkpoint | VRAM Peak | Tốc độ (FPS) | mAP@50 | mAP@50:95 |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -48,7 +48,7 @@ cd DeepLearning-Applications
 Mỗi thư mục `DayX/` là một dự án Python độc lập:
 
 ```powershell
-# Di chuyển vào dự án Day 1
+# Di chuyển vào dự án Day 1: Vietnam Vehicle Detection
 cd Day1/vn-traffic-yolo26-vs-rtdetr
 
 # Khởi tạo môi trường & cài đặt thư viện

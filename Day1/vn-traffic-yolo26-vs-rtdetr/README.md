@@ -1,4 +1,4 @@
-# 🇻🇳 Vietnam Traffic Benchmark — YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L
+# 🇻🇳 Vietnam Vehicle Detection — YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Ultralytics](https://img.shields.io/badge/ultralytics-8.4.139-green.svg)](https://github.com/ultralytics/ultralytics)
@@ -6,13 +6,13 @@
 [![Dataset: Roboflow](https://img.shields.io/badge/dataset-Roboflow%20Universe-purple.svg)](https://universe.roboflow.com/jinkun1998s-workspace/vietnam-vehicle-detection-nt45b)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Dự án nghiên cứu và benchmark thực nghiệm end-to-end so sánh giữa các biến thể thuộc họ **YOLO26** (kiến trúc CNN one-stage mới nhất) với **RT-DETR-L** (Real-Time Detection Transformer):
+Dự án thực nghiệm phát hiện phương tiện giao thông (Vehicle Detection) end-to-end so sánh giữa các biến thể thuộc họ **YOLO26** (kiến trúc CNN one-stage mới nhất) với **RT-DETR-L** (Real-Time Detection Transformer):
 - **YOLO26n (Nano)**: Tối ưu cho thiết bị nhúng / Edge AI, FPS tối đa, tiết kiệm VRAM.
 - **YOLO26s (Small)**: Mô hình chuẩn cân bằng hài hòa giữa độ chính xác và tốc độ.
 - **YOLO26m (Medium)**: Dung lượng mô hình lớn hơn, tăng cường độ chính xác nhận diện.
 - **RT-DETR-L (Large)**: Đại diện cho kiến trúc Hybrid Transformer loại bỏ hoàn toàn NMS.
 
-Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao thông đường bộ Việt Nam với mật độ phương tiện hỗn hợp cao (xe máy, xe đạp, ô tô, xe buýt, xe tải,...). Dự án được thiết kế **chạy trực tiếp tại Local/Server** độc lập, tự động hóa từ tải dữ liệu, kiểm tra nhãn, huấn luyện, đánh giá định lượng đến xuất báo cáo trực quan.
+Thực nghiệm được thực hiện trên tập dữ liệu đặc thù phương tiện giao thông đường bộ Việt Nam với mật độ phương tiện hỗn hợp cao (xe máy, xe đạp, ô tô, xe buýt, xe tải,...). Dự án được thiết kế **chạy trực tiếp tại Local/Server** độc lập, tự động hóa từ tải dữ liệu, kiểm tra nhãn, huấn luyện, đánh giá định lượng đến xuất báo cáo trực quan.
 
 ---
 
