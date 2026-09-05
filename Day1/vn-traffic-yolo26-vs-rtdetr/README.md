@@ -23,6 +23,12 @@ Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao 
 4. [Cài đặt môi trường](#4-cài-đặt-môi-trường)
 5. [Hướng dẫn chạy thực nghiệm Local](#5-hướng-dẫn-chạy-thực-nghiệm-local)
 6. [Kết quả thực nghiệm & Phân tích chuyên sâu (Official Benchmark)](#6-kết-quả-thực-nghiệm--phân-tích-chuyên-sâu-official-benchmark)
+   - [6.1. Bảng đối đầu tổng thể 4 mô hình](#61-bảng-đối-đầu-tổng-thể-4-mô-hình-đánh-giá-trên-test-split--740-ảnh-độc-lập)
+   - [6.2. Đối chiếu với Roboflow baseline](#62-đối-chiếu-với-mô-hình-chính-thức-của-roboflow-train-validation-split)
+   - [6.3. Phân tích chi tiết 8 lớp & Hiện tượng Lệch nhãn](#63-phân-tích-chi-tiết-từng-lớp--hiện-tượng-lệch-nhãn-class-imbalance)
+   - [6.4. Đường cong huấn luyện & Ma trận nhầm lẫn](#64-đường-cong-huấn-luyện--ma-trận-nhầm-lẫn)
+   - [6.5. Trực quan hóa ảnh nhận diện thực tế](#65-trực-quan-hóa-ảnh-nhận-diện-thực-tế-qualitative-side-by-side)
+   - [6.6. Khuyến nghị lựa chọn mô hình triển khai thực tế](#66-khuyến-nghị-lựa-chọn-mô-hình-triển-khai-thực-tế-practical-deployment-guide)
 7. [Inference & Export mô hình](#7-inference--export-mô-hình)
 8. [Kiểm thử tự động (Unit Tests)](#8-kiểm-thử-tự-động-unit-tests)
 9. [Sản phẩm đầu ra (Artifacts & Reports)](#9-sản-phẩm-đầu-ra-artifacts--reports)
@@ -306,6 +312,19 @@ Số liệu chi tiết từ đánh giá trên tập **Test split độc lập (7
   <img src="docs/images/sample_prediction_02.jpg" width="96%" />
   <br><em>Trường hợp 2: Khả năng nhận diện phương tiện kích thước lớn (xe buýt, xe tải) và xe máy chen chúc</em>
 </p>
+
+---
+
+### 6.6. Khuyến nghị lựa chọn mô hình triển khai thực tế (Practical Deployment Guide)
+
+Dựa trên kết quả benchmark thực nghiệm toàn diện trên tập dữ liệu đặc thù Việt Nam, khuyến nghị lựa chọn mô hình theo từng kịch bản ứng dụng cụ thể:
+
+| Kịch bản triển khai | Mô hình đề xuất | Ưu điểm cốt lõi | Lý do lựa chọn |
+|---|:---:|---|---|
+| 📡 **Edge AI & Thiết bị nhúng**<br>*(Raspberry Pi 5, Jetson Orin Nano, Drone, Camera thông minh)* | **YOLO26n (Nano)** | • Checkpoint siêu nhẹ: **5.14 MB**<br>• Params: **2.51 M**<br>• VRAM Peak: **156 MB**<br>• Tốc độ: **94.6 FPS** | Mức tiêu thụ tài nguyên phần cứng tối thiểu, không gây tràn bộ nhớ hay quá nhiệt trên các vi xử lý công suất thấp, độ trễ chỉ ~10.5 ms. |
+| 🚦 **CCTV & Giám sát giao thông Real-time**<br>*(Phát hiện xe cộ luồng live, đếm lưu lượng, cảnh báo ùn tắc)* | **YOLO26s (Small)** | • **Precision cao nhất: 78.5%**<br>• Tốc độ: **92.3 FPS**<br>• Checkpoint: **19.4 MB**<br>• VRAM Peak: **376 MB** | Đạt **độ chuẩn xác cao nhất (ít báo động giả nhất)** trong toàn bộ 4 mô hình, tốc độ xử lý gần như tương đương bản Nano, lý tưởng cho các luồng RTSP 30-60 FPS liên tục. |
+| 🛡️ **Hệ thống phạt nguội & Phân tích chuyên sâu**<br>*(Server GPU, xử lý vi phạm giao thông, phạt lấn làn, đỗ trái phép)* | **RT-DETR-L (Large)** | • **mAP50-95 cao nhất: 43.76%**<br>• **Recall cao nhất: 56.63%**<br>• **Không cần NMS** (NMS-free)<br>• Tốc độ: **21.1 FPS** | Cơ chế Self-Attention và Cross-Attention của Transformer xử lý vượt trội các trường hợp phương tiện chen chúc, che khuất nhau ở mật độ cao, hạn chế tối đa việc bỏ sót vi phạm. |
+| ⚖️ **Cân nhắc với YOLO26m** | *Cân nhắc kỹ* | • mAP50-95: 40.13%<br>• Tốc độ: 38.5 FPS<br>• VRAM: 728 MB | YOLO26m tăng độ trễ lên gấp 2.4 lần so với YOLO26s (từ 10.8ms lên 25.9ms) nhưng mAP không cải thiện đáng kể do hạn chế về nhãn tập test. Khuyến nghị ưu tiên chọn **YOLO26s** (nếu cần tốc độ) hoặc lên thẳng **RT-DETR-L** (nếu cần độ chuẩn xác cao). |
 
 ---
 
