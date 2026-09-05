@@ -47,12 +47,24 @@ augmentation:
   mixup: 0.0
 
 models:
+  yolo26n:
+    family: yolo
+    checkpoint: yolo26n.pt
+    amp: true
+    deterministic: true
+    run_name: yolo26n_vn_traffic
   yolo26:
     family: yolo
     checkpoint: yolo26s.pt
     amp: true
     deterministic: true
     run_name: yolo26s_vn_traffic
+  yolo26m:
+    family: yolo
+    checkpoint: yolo26m.pt
+    amp: true
+    deterministic: true
+    run_name: yolo26m_vn_traffic
   rtdetr:
     family: rtdetr
     checkpoint: rtdetr-l.pt

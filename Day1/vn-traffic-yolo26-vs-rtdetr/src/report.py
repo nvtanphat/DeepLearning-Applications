@@ -64,9 +64,13 @@ def generate_report(config_path: str) -> Path:
     reports.mkdir(parents=True, exist_ok=True)
 
     rows = []
-    for key in ("yolo26", "rtdetr"):
-        metrics = _load_json(reports / f"{key}_metrics.json")
-        bench = _load_json(reports / f"{key}_benchmark.json")
+    for key in cfg["models"]:
+        metrics_file = reports / f"{key}_metrics.json"
+        bench_file = reports / f"{key}_benchmark.json"
+        if not metrics_file.exists() or not bench_file.exists():
+            continue
+        metrics = _load_json(metrics_file)
+        bench = _load_json(bench_file)
         rows.append({
             "model": key,
             "precision": metrics.get("precision"),
@@ -90,13 +94,22 @@ def generate_report(config_path: str) -> Path:
     _overall_plots(df, reports)
 
     # Join per-class results for direct comparison.
-    yc = pd.read_csv(reports / "yolo26_per_class_metrics.csv").add_prefix("yolo26_")
-    rc = pd.read_csv(reports / "rtdetr_per_class_metrics.csv").add_prefix("rtdetr_")
-    per_class = yc.merge(rc, left_on="yolo26_class_id", right_on="rtdetr_class_id", how="outer")
-    per_class.to_csv(reports / "per_class_comparison.csv", index=False)
+    per_class_dfs = []
+    for key in cfg["models"]:
+        p_csv = reports / f"{key}_per_class_metrics.csv"
+        if p_csv.exists():
+            df_k = pd.read_csv(p_csv).add_prefix(f"{key}_")
+            per_class_dfs.append(df_k)
+    if per_class_dfs:
+        merged = per_class_dfs[0]
+        first_col = [c for c in merged.columns if c.endswith("_class_id")][0]
+        for df_other in per_class_dfs[1:]:
+            other_col = [c for c in df_other.columns if c.endswith("_class_id")][0]
+            merged = merged.merge(df_other, left_on=first_col, right_on=other_col, how="outer")
+        merged.to_csv(reports / "per_class_comparison.csv", index=False)
 
     lines = [
-        "# YOLO26 vs RT-DETR — Vietnam Vehicle Detection",
+        "# Model Comparison — Vietnam Vehicle Detection",
         "",
         "## 1. Experimental protocol",
         "",
@@ -108,10 +121,8 @@ def generate_report(config_path: str) -> Path:
         "",
         "## 2. Dataset audit and visualization",
         "",
-        "![Split distribution](dataset/split_distribution.png)",
-        "",
+        "![Dataset splits](dataset/split_distribution.png)",
         "![Class distribution](dataset/class_distribution.png)",
-        "",
         "![Training label samples](dataset/train_label_samples.jpg)",
         "",
         "## 3. Overall quantitative results",
@@ -124,35 +135,36 @@ def generate_report(config_path: str) -> Path:
         "",
         "## 4. Per-class metrics",
         "",
-        "See `yolo26_per_class_metrics.csv`, `rtdetr_per_class_metrics.csv`, and `per_class_comparison.csv` for precision, recall, F1, AP50, AP75, and mAP50-95 by class.",
+        "See `per_class_comparison.csv` for precision, recall, F1, AP50, AP75, and mAP50-95 by class.",
         "",
         "## 5. Standard validation visuals",
         "",
         "Ultralytics-generated validation artifacts are retained per model: PR/F1/P/R curves, confusion matrices (raw and normalized), validation labels and predictions.",
         "",
-        "### YOLO26",
-        "",
-        "![YOLO26 PR](val_runs/yolo26/BoxPR_curve.png)",
-        "![YOLO26 F1](val_runs/yolo26/BoxF1_curve.png)",
-        "![YOLO26 confusion](val_runs/yolo26/confusion_matrix_normalized.png)",
-        "",
-        "### RT-DETR",
-        "",
-        "![RT-DETR PR](val_runs/rtdetr/BoxPR_curve.png)",
-        "![RT-DETR F1](val_runs/rtdetr/BoxF1_curve.png)",
-        "![RT-DETR confusion](val_runs/rtdetr/confusion_matrix_normalized.png)",
-        "",
+    ]
+    for key in cfg["models"]:
+        lines.extend([
+            f"### {key.upper()}",
+            "",
+            f"![{key} PR](val_runs/{key}/BoxPR_curve.png)",
+            f"![{key} F1](val_runs/{key}/BoxF1_curve.png)",
+            f"![{key} confusion](val_runs/{key}/confusion_matrix_normalized.png)",
+            "",
+        ])
+    lines.extend([
         "## 6. Training curves",
         "",
         "Training images and `results.csv` are copied into `models/<model>/training/`. The standard `results.png` captures loss and validation metric trajectories.",
         "",
-        "![YOLO26 training](models/yolo26/training/results.png)",
-        "![RT-DETR training](models/rtdetr/training/results.png)",
+    ])
+    for key in cfg["models"]:
+        lines.append(f"![{key} training](models/{key}/training/results.png)")
+    lines.extend([
         "",
         "## 7. Qualitative comparison and error analysis",
         "",
-        "Deterministic side-by-side samples are under `qualitative/side_by_side/`: Ground truth | YOLO26 | RT-DETR.",
-        "Worst cases are under `qualitative/worst_yolo26/` and `qualitative/worst_rtdetr/`. Their TP/FP/FN/P/R/F1 use a fixed diagnostic confidence/IoU threshold and are for error analysis, not AP reporting.",
+        "Deterministic side-by-side samples are under `qualitative/side_by_side/`.",
+        "Worst cases are under `qualitative/worst_<model>/`. Their TP/FP/FN/P/R/F1 use a fixed diagnostic confidence/IoU threshold and are for error analysis, not AP reporting.",
         "",
         "## 8. Deployment metrics",
         "",
@@ -160,8 +172,8 @@ def generate_report(config_path: str) -> Path:
         "",
         "## 9. Interpretation rule",
         "",
-        "Do not declare a winner from mAP alone. Report accuracy, per-class behavior, failure cases, latency/FPS, VRAM, checkpoint size, and parameter count together. The two chosen variants are not parameter-matched.",
-    ]
+        "Do not declare a winner from mAP alone. Report accuracy, per-class behavior, failure cases, latency/FPS, VRAM, checkpoint size, and parameter count together. The chosen variants are not parameter-matched.",
+    ])
     if (reports / "figures" / "gpu_memory.png").exists():
         lines.insert(lines.index("## 9. Interpretation rule"), "![GPU memory](figures/gpu_memory.png)")
         lines.insert(lines.index("## 9. Interpretation rule"), "")

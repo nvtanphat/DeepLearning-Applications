@@ -23,12 +23,17 @@ def main() -> None:
         print("[1/7] Download dataset"); download_dataset(args.config)
     print("[2/7] Audit + dataset visualizations"); audit_dataset(args.config)
 
-    if not args.skip_train:
-        print("[3/7] Train YOLO26"); train_model(args.config, "yolo26")
-        print("[4/7] Train RT-DETR"); train_model(args.config, "rtdetr")
+    from src.common import load_config
+    cfg = load_config(args.config)
+    model_keys = list(cfg["models"].keys())
 
-    print("[5/7] Full test evaluation + benchmark")
-    for key in ("yolo26", "rtdetr"):
+    if not args.skip_train:
+        for idx, key in enumerate(model_keys, 1):
+            print(f"[Train {idx}/{len(model_keys)}] Train {key.upper()}")
+            train_model(args.config, key)
+
+    print("[Evaluation & Benchmark] Full test evaluation + benchmark")
+    for key in model_keys:
         evaluate_model(args.config, key)
         benchmark_model(args.config, key)
 

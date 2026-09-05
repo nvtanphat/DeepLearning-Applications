@@ -106,7 +106,7 @@ def generate_prediction_visuals(config_path: str, sample_count: int | None = Non
         samples = [images[i] for i in idx]
 
     models = {}
-    for key in ("yolo26", "rtdetr"):
+    for key in cfg["models"]:
         mcfg = cfg["models"][key]
         ckpt = resolve_path(cfg["paths"]["runs_dir"]) / mcfg["run_name"] / "weights" / "best.pt"
         if not ckpt.exists():
@@ -152,13 +152,13 @@ def generate_prediction_visuals(config_path: str, sample_count: int | None = Non
         h, w = img.shape[:2]
         gt_boxes, gt_cls = _load_gt(label_path_for_image(image_path, test_dir, labels_dir), w, h)
         gt_img = _draw_gt(img, gt_boxes, gt_cls, names)
-        yr = cache.get(("yolo26", str(image_path)))
-        if yr is None:
-            yr = predict_one("yolo26", image_path)[0]
-        rr = cache.get(("rtdetr", str(image_path)))
-        if rr is None:
-            rr = predict_one("rtdetr", image_path)[0]
-        canvas = np.hstack([_title_tile(gt_img, "Ground truth"), _title_tile(yr.plot(), "YOLO26"), _title_tile(rr.plot(), "RT-DETR")])
+        tiles = [_title_tile(gt_img, "Ground truth")]
+        for k in models:
+            res = cache.get((k, str(image_path)))
+            if res is None:
+                res = predict_one(k, image_path)[0]
+            tiles.append(_title_tile(res.plot(), k.upper()))
+        canvas = np.hstack(tiles)
         out = side_dir / f"sample_{i:02d}_{image_path.stem[:40]}.jpg"
         cv2.imwrite(str(out), canvas)
         sample_outputs.append(str(out))

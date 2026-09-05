@@ -9,7 +9,7 @@ from src.common import create_model, load_config, resolve_path
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--config", default="configs/experiment.yaml")
-    p.add_argument("--model", choices=["yolo26", "rtdetr"], required=True)
+    p.add_argument("--model", required=True, help="Model key (e.g. yolo26, yolo26n, yolo26m, rtdetr)")
     p.add_argument("--checkpoint")
     p.add_argument("--format", default="onnx", choices=["onnx", "engine", "openvino"])
     args = p.parse_args()

@@ -76,11 +76,18 @@ def train_model(config_path: str, model_key: str, resume: str | None = None) -> 
 def main() -> None:
     p = argparse.ArgumentParser()
     p.add_argument("--config", default="configs/experiment.yaml")
-    p.add_argument("--model", choices=["yolo26", "rtdetr", "all"], default="all")
+    p.add_argument("--model", default="all", help="Model key or 'all'")
     p.add_argument("--resume", help="Path to last.pt; only valid with a single --model")
     args = p.parse_args()
 
-    keys = ["yolo26", "rtdetr"] if args.model == "all" else [args.model]
+    cfg = load_config(args.config)
+    available = list(cfg["models"].keys())
+    if args.model == "all":
+        keys = available
+    elif args.model in cfg["models"]:
+        keys = [args.model]
+    else:
+        raise SystemExit(f"Unknown model: {args.model}. Available: {available}")
     if args.resume and len(keys) != 1:
         raise SystemExit("--resume requires a single model")
     for key in keys:
