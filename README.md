@@ -8,7 +8,7 @@ Kho lưu trữ các bài thực hành, nghiên cứu thực nghiệm và đồ �
 
 | Ngày / Chuyên đề | Thư mục | Mô tả bài toán | Công nghệ / Mô hình |
 |---|---|---|---|
-| **Day 1** | [Day1/vn-traffic-yolo26-vs-rtdetr](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Traffic Benchmark**: So sánh thực nghiệm toàn diện phát hiện phương tiện giao thông tại Việt Nam | **YOLO26s vs RT-DETR-L**, PyTorch, Ultralytics, Roboflow |
+| **Day 1** | [Day1/vn-traffic-yolo26-vs-rtdetr](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Traffic Benchmark**: So sánh thực nghiệm toàn diện phát hiện phương tiện giao thông tại Việt Nam | **YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L**, PyTorch, Ultralytics, Roboflow |
 
 ---
 

@@ -1,4 +1,4 @@
-# 🇻🇳 Vietnam Traffic Benchmark — YOLO26s vs RT-DETR-L
+# 🇻🇳 Vietnam Traffic Benchmark — YOLO26 Variants (Nano/Small/Medium) vs RT-DETR-L
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Ultralytics](https://img.shields.io/badge/ultralytics-8.4.139-green.svg)](https://github.com/ultralytics/ultralytics)
@@ -6,9 +6,11 @@
 [![Dataset: Roboflow](https://img.shields.io/badge/dataset-Roboflow%20Universe-purple.svg)](https://universe.roboflow.com/jinkun1998s-workspace/vietnam-vehicle-detection-nt45b)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Dự án nghiên cứu và benchmark thực nghiệm end-to-end so sánh hai kiến trúc object detection tiêu biểu:
-- **YOLO26s**: Đại diện cho thế hệ CNN-based real-time detector một tầng (one-stage) mới nhất.
-- **RT-DETR-L**: Đại diện cho kiến trúc Real-Time Detection Transformer (end-to-end object detector loại bỏ NMS).
+Dự án nghiên cứu và benchmark thực nghiệm end-to-end so sánh giữa các biến thể thuộc họ **YOLO26** (kiến trúc CNN one-stage mới nhất) với **RT-DETR-L** (Real-Time Detection Transformer):
+- **YOLO26n (Nano)**: Tối ưu cho thiết bị nhúng / Edge AI, FPS tối đa, tiết kiệm VRAM.
+- **YOLO26s (Small)**: Mô hình chuẩn cân bằng hài hòa giữa độ chính xác và tốc độ.
+- **YOLO26m (Medium)**: Dung lượng mô hình lớn hơn, tăng cường độ chính xác nhận diện.
+- **RT-DETR-L (Large)**: Đại diện cho kiến trúc Hybrid Transformer loại bỏ hoàn toàn NMS.
 
 Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao thông đường bộ Việt Nam với mật độ phương tiện hỗn hợp cao (xe máy, xe đạp, ô tô, xe buýt, xe tải,...). Dự án được thiết kế **chạy trực tiếp tại Local/Server** độc lập, tự động hóa từ tải dữ liệu, kiểm tra nhãn, huấn luyện, đánh giá định lượng đến xuất báo cáo trực quan.
 
@@ -56,21 +58,22 @@ Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao 
 
 ## 2. Thiết kế thực nghiệm & Fair-Comparison Protocol
 
-Hai mô hình thuộc hai họ kiến trúc khác biệt và không tương đương hoàn toàn về số lượng tham số (non-parameter-matched). Do đó, kết luận đánh giá đa chiều trên bài toán đánh đổi (**Trade-off analysis**):
+So sánh đa chiều theo bài toán đánh đổi (**Trade-off analysis**):
 
 $$\text{Accuracy (mAP, F1, Per-Class AP)} \iff \text{Latency / FPS} \iff \text{VRAM Footprint} \iff \text{Model Size / Params}$$
 
-| Tiêu chí | YOLO26s | RT-DETR-L |
-|---|---|---|
-| **Họ kiến trúc** | Advanced CNN (One-stage) | Hybrid Transformer (NMS-free) |
-| **Checkpoint gốc** | `yolo26s.pt` | `rtdetr-l.pt` |
-| **Input resolution** | $640 \times 640$ | $640 \times 640$ |
-| **Số epoch** | 50 (patience = 15) | 50 (patience = 15) |
-| **Batch size** | 4 | 4 |
-| **Random Seed** | 42 | 42 |
-| **Data Augmentation** | HSV (0.015, 0.5, 0.3), Fliplr (0.5), Translate (0.1), Scale (0.5) | Giống YOLO26s (cùng config) |
-| **AMP (Mixed Precision)** | `True` | `False` (đảm bảo ổn định Deformable Attention) |
-| **Deterministic Mode** | `True` | `False` (giới hạn tương thích toán tử DETR) |
+| Tiêu chí | YOLO26n | YOLO26s | YOLO26m | RT-DETR-L |
+|---|---|---|---|---|
+| **Họ kiến trúc** | Advanced CNN (One-stage) | Advanced CNN (One-stage) | Advanced CNN (One-stage) | Hybrid Transformer (NMS-free) |
+| **Checkpoint gốc** | `yolo26n.pt` | `yolo26s.pt` | `yolo26m.pt` | `rtdetr-l.pt` |
+| **Mục tiêu tối ưu** | Edge AI / Max FPS | Cân bằng Speed/mAP | Nâng cao Accuracy | Transformer SOTA |
+| **Input resolution**| $640 \times 640$ | $640 \times 640$ | $640 \times 640$ | $640 \times 640$ |
+| **Số epoch** | 50 (patience = 15) | 50 (patience = 15) | 50 (patience = 15) | 50 (patience = 15) |
+| **Batch size** | 4 | 4 | 4 | 4 |
+| **Random Seed** | 42 | 42 | 42 | 42 |
+| **Data Augmentation**| Giống nhau | Giống nhau | Giống nhau | Giống nhau |
+| **AMP (Mixed Prec.)**| `True` | `True` | `True` | `False` |
+| **Deterministic** | `True` | `True` | `True` | `False` |
 
 ---
 
@@ -79,17 +82,17 @@ $$\text{Accuracy (mAP, F1, Per-Class AP)} \iff \text{Latency / FPS} \iff \text{V
 ```text
 vn-traffic-yolo26-vs-rtdetr/
 ├── configs/
-│   ├── experiment.yaml          # Cấu hình thực nghiệm chuẩn (50 epochs, full test)
+│   ├── experiment.yaml          # Cấu hình thực nghiệm chuẩn (50 epochs, 4 models, full test)
 │   └── quick.yaml               # Cấu hình smoke-test nhanh (1 epoch, sanity check)
 ├── src/
 │   ├── common.py                # Hàm load config, đường dẫn, device, environment logging
 │   ├── download_data.py         # Tự động tải dữ liệu từ Roboflow Universe
 │   ├── audit_dataset.py         # Kiểm tra tính hợp lệ của nhãn & vẽ phân bố dataset
-│   ├── train.py                 # Huấn luyện YOLO26 hoặc RT-DETR với early stopping
+│   ├── train.py                 # Huấn luyện bất kỳ model nào hoặc tất cả với early stopping
 │   ├── evaluate.py              # Đánh giá mAP50, mAP50-95 và per-class metrics trên test split
 │   ├── benchmark.py             # Đo latency (mean/p50/p95), FPS, VRAM peak, RAM footprint
-│   ├── visualize_predictions.py # Sinh ảnh trực quan so sánh GT vs YOLO26 vs RT-DETR & worst cases
-│   ├── report.py                # Tổng hợp toàn bộ số liệu ra REPORT.md và biểu đồ so sánh
+│   ├── visualize_predictions.py # Sinh ảnh trực quan so sánh GT vs Models & worst cases
+│   ├── report.py                # Tổng hợp toàn bộ số liệu ra REPORT.md và biểu đồ so sánh đa mô hình
 │   ├── run_all.py               # Chạy pipeline toàn diện từ A đến Z tại local
 │   ├── infer.py                 # Nhận diện đối tượng trên ảnh hoặc video tùy chọn
 │   └── export_model.py          # Xuất mô hình sang ONNX / TensorRT / OpenVINO
@@ -142,7 +145,7 @@ python -m src.run_all --config configs/quick.yaml
 ```
 
 ### 5.2. Chạy toàn bộ Pipeline chuẩn (Full Run)
-Lệnh tự động chạy toàn bộ quy trình: Tải dữ liệu $\to$ Audit nhãn $\to$ Train YOLO26 $\to$ Train RT-DETR $\to$ Đánh giá Test set $\to$ Benchmark FPS/VRAM $\to$ Ghép ảnh trực quan $\to$ Xuất báo cáo:
+Lệnh tự động chạy toàn bộ quy trình: Tải dữ liệu $\to$ Audit nhãn $\to$ Train tất cả models $\to$ Đánh giá Test set $\to$ Benchmark FPS/VRAM $\to$ Ghép ảnh trực quan $\to$ Xuất báo cáo tổng hợp:
 ```powershell
 python -m src.run_all --config configs/experiment.yaml
 ```
@@ -156,20 +159,23 @@ python -m src.download_data --config configs/experiment.yaml
 # 2. Audit dữ liệu & trực quan hóa phân bố nhãn
 python -m src.audit_dataset --config configs/experiment.yaml
 
-# 3. Huấn luyện riêng từng model
-python -m src.train --model yolo26 --config configs/experiment.yaml
-python -m src.train --model rtdetr --config configs/experiment.yaml
+# 3. Huấn luyện riêng từng model (yolo26n, yolo26, yolo26m, rtdetr, hoặc all)
+python -m src.train --model yolo26n --config configs/experiment.yaml
+python -m src.train --model yolo26  --config configs/experiment.yaml
+python -m src.train --model yolo26m --config configs/experiment.yaml
+python -m src.train --model rtdetr  --config configs/experiment.yaml
+python -m src.train --model all     --config configs/experiment.yaml
 
 # 4. Resume training nếu bị gián đoạn
-python -m src.train --model rtdetr --resume runs\rtdetr_l_vn_traffic\weights\last.pt
+python -m src.train --model yolo26m --resume runs\yolo26m_vn_traffic\weights\last.pt
 
-# 5. Đánh giá test split
+# 5. Đánh giá test split (hỗ trợ từng model hoặc all)
 python -m src.evaluate --model all --config configs/experiment.yaml
 
 # 6. Đo lường tốc độ & VRAM benchmark
 python -m src.benchmark --model all --config configs/experiment.yaml
 
-# 7. Trực quan hóa ảnh dự đoán & phân tích lỗi
+# 7. Trực quan hóa ảnh dự đoán & phân tích lỗi (so sánh đa mô hình)
 python -m src.visualize_predictions --config configs/experiment.yaml
 
 # 8. Sinh báo cáo tổng hợp REPORT.md
@@ -192,8 +198,8 @@ python -m src.report --config configs/experiment.yaml
 - Đo lường: **Mean / Median / p95 Latency**, **FPS**, **CUDA Peak Allocated/Reserved VRAM**, **Model Parameters**, **Checkpoint Size**.
 
 ### 6.3. Phân tích trực quan & Chẩn đoán ca khó (Error Analysis)
-- Ghép ảnh so sánh 3 góc nhìn (Side-by-side): **Ground Truth** $\leftrightarrow$ **YOLO26s** $\leftrightarrow$ **RT-DETR-L** (`conf=0.25`, `iou=0.50`).
-- Tự động lọc và lưu các ảnh có điểm F1 thấp nhất vào `worst_yolo26/` và `worst_rtdetr/` phục vụ mổ xẻ các trường hợp nhận diện sai hoặc bỏ sót.
+- Ghép ảnh so sánh đồng thời các góc nhìn (Side-by-side): **Ground Truth** $\leftrightarrow$ **Tất cả Models** (`conf=0.25`, `iou=0.50`).
+- Tự động lọc và lưu các ảnh có điểm F1 thấp nhất vào `worst_<model>/` phục vụ mổ xẻ các trường hợp nhận diện sai hoặc bỏ sót của từng mô hình.
 
 ---
 
@@ -201,22 +207,24 @@ python -m src.report --config configs/experiment.yaml
 
 ### 7.1. Nhận diện trên ảnh & video tùy biến
 ```powershell
-# Nhận diện trên ảnh
-python -m src.infer --source test_image.jpg --model yolo26
+# Nhận diện trên ảnh với biến thể mong muốn
+python -m src.infer --source test_image.jpg --model yolo26n
+python -m src.infer --source test_image.jpg --model yolo26m
 python -m src.infer --source test_image.jpg --model rtdetr
 
 # Nhận diện trên video giao thông
-python -m src.infer --source traffic_video.mp4 --model yolo26 --conf 0.3
+python -m src.infer --source traffic_video.mp4 --model yolo26n --conf 0.3
 ```
 
 ### 7.2. Xuất mô hình phục vụ triển khai
 ```powershell
 # Xuất định dạng ONNX
-python -m src.export_model --model yolo26 --format onnx
-python -m src.export_model --model rtdetr --format onnx
+python -m src.export_model --model yolo26n --format onnx
+python -m src.export_model --model yolo26m --format onnx
+python -m src.export_model --model rtdetr  --format onnx
 
 # Xuất TensorRT (yêu cầu GPU NVIDIA + TensorRT)
-python -m src.export_model --model yolo26 --format engine
+python -m src.export_model --model yolo26n --format engine
 ```
 
 ---
@@ -239,12 +247,12 @@ Toàn bộ kết quả sau khi chạy được tập hợp tại `artifacts/repo
 artifacts/reports/
 ├── REPORT.md                         # Báo cáo tổng kết toàn diện
 ├── environment.json                  # Chi tiết phần cứng & môi trường chạy
-├── comparison.csv / comparison.md    # Bảng so sánh đối đầu định lượng
-├── per_class_comparison.csv          # Chi tiết mAP50, mAP75, mAP50-95 theo 8 lớp
+├── comparison.csv / comparison.md    # Bảng so sánh đối đầu định lượng giữa tất cả models
+├── per_class_comparison.csv          # Chi tiết mAP50, mAP75, mAP50-95 theo 8 lớp của từng model
 ├── dataset/                          # Biểu đồ phân bổ dữ liệu
 ├── figures/                          # Biểu đồ so sánh metric, FPS, VRAM
-├── val_runs/                         # Đường cong PR, F1, ma trận nhầm lẫn
-└── qualitative/                      # Ảnh side-by-side & failure cases
+├── val_runs/                         # Đường cong PR, F1, ma trận nhầm lẫn của từng model
+└── qualitative/                      # Ảnh side-by-side & failure cases theo từng model
 ```
 
 ---
