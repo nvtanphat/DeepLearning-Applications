@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" />
 </p>
 
-Kho lưu trữ các bài thực hành chuyên sâu, nghiên cứu thực nghiệm và đồ án ứng dụng **Deep Learning & Computer Vision** (Học sâu và ứng dụng). Mỗi dự án được đóng gói độc lập theo tiêu chuẩn kỹ thuật Production-ready: pipeline tự động từ nạp dữ liệu, kiểm toán nhãn, huấn luyện, benchmark định lượng đến báo cáo trực quan.
+Kho lưu trữ các bài thực hành chuyên sâu, nghiên cứu thực nghiệm và đồ án môn học **Học sâu và Ứng dụng (Deep Learning & Applications)**, tập trung vào các bài toán Thị giác máy tính (Computer Vision) trong thực tế. Mỗi dự án được đóng gói độc lập theo tiêu chuẩn kỹ thuật Production-ready: pipeline tự động từ nạp dữ liệu, kiểm toán nhãn, huấn luyện, benchmark định lượng đến báo cáo trực quan.
 
 ---
 
