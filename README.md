@@ -3,12 +3,11 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" />
-  <img src="https://img.shields.io/badge/Ultralytics-YOLO26-00FFFF?style=for-the-badge&logo=ultralytics&logoColor=black" />
-  <img src="https://img.shields.io/badge/Domain-Computer_Vision-brightgreen?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Deep_Learning-Applications-blueviolet?style=for-the-badge" />
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" />
 </p>
 
-Kho lưu trữ các bài thực hành chuyên sâu, nghiên cứu thực nghiệm và đồ án môn học **Học sâu và Ứng dụng (Deep Learning & Applications)**, tập trung vào các bài toán Thị giác máy tính (Computer Vision) trong thực tế. Mỗi dự án được đóng gói độc lập theo tiêu chuẩn kỹ thuật Production-ready: pipeline tự động từ nạp dữ liệu, kiểm toán nhãn, huấn luyện, benchmark định lượng đến báo cáo trực quan.
+Kho lưu trữ các bài thực hành chuyên sâu, nghiên cứu thực nghiệm và đồ án môn học **Học sâu và Ứng dụng (Deep Learning & Applications)**. Mỗi dự án được đóng gói độc lập theo tiêu chuẩn kỹ thuật Production-ready: pipeline tự động từ nạp dữ liệu, kiểm toán nhãn, huấn luyện, benchmark định lượng đến báo cáo trực quan.
 
 ---
 
