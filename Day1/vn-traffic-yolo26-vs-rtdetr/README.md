@@ -190,31 +190,31 @@ python -m src.report --config configs/experiment.yaml
 
 ## 6. Kết quả thực nghiệm & Phân tích chuyên sâu (Official Benchmark)
 
-### 6.1. Bảng đối đầu tổng thể (Đánh giá trên Test Split — 740 ảnh độc lập)
+### 6.1. Bảng đối đầu tổng thể 4 mô hình (Đánh giá trên Test Split — 740 ảnh độc lập)
 
-| Tiêu chí | 🚀 YOLO26s | 🛡️ RT-DETR-L | Đánh giá Trade-off |
-|:---|:---:|:---:|:---|
-| **mAP50-95** (Metric chính) | `0.4018` | **`0.4376`** | RT-DETR-L nhỉnh hơn **+3.58%** |
-| **mAP50** | `0.5335` | **`0.5632`** | RT-DETR-L cao hơn +2.97% |
-| **mAP75** | `0.4481` | **`0.4961`** | RT-DETR-L định vị bounding box khắt khe tốt hơn |
-| **Precision** | **`0.7852`** | `0.7313` | **YOLO26s chính xác hơn (+5.39%)**, ít báo ảo |
-| **Recall** | `0.5191` | **`0.5663`** | RT-DETR-L bao quát tốt hơn, ít bỏ sót đối tượng nhỏ |
-| **F1-Score** | `0.6250` | **`0.6383`** | Tương đương |
-| **Tốc độ (FPS, Batch=1)** | **`92.26 FPS`** | `21.09 FPS` | **YOLO26s nhanh gấp 4.37 lần!** |
-| **Độ trễ trung bình (Mean)** | **`10.84 ms`** | `47.41 ms` | YOLO26s vượt trội cho ứng dụng thời gian thực |
-| **Độ trễ p95** | **`11.55 ms`** | `49.20 ms` | YOLO26s ổn định khung hình cao |
-| **Tiêu thụ GPU VRAM (Peak)** | **`376.15 MB`** | `1033.50 MB` | **YOLO26s tiết kiệm VRAM gần 3 lần** |
-| **Kích thước checkpoint** | **`19.38 MB`** | `63.18 MB` | Checkpoint YOLO26s nhỏ hơn 3.25 lần |
-| **Số lượng tham số (Params)** | **`9.95 M`** | `32.82 M` | YOLO26s nhỏ gọn hơn 3.3 lần |
+| Tiêu chí | ⚡ YOLO26n (Nano) | 🚀 YOLO26s (Small) | 🏋️ YOLO26m (Medium) | 🛡️ RT-DETR-L (Large) | Đánh giá Trade-off & Nhận xét |
+|:---|:---:|:---:|:---:|:---:|:---|
+| **mAP50-95** (Metric chính) | `0.4015` | `0.4018` | `0.4013` | **`0.4376`** | RT-DETR-L cao nhất (+3.58% so với họ YOLO) |
+| **mAP50** | `0.5257` | `0.5335` | `0.5350` | **`0.5632`** | RT-DETR-L nhỉnh hơn ~2.8 - 3.7% |
+| **mAP75** | `0.4541` | `0.4481` | `0.4489` | **`0.4961`** | Transformer định vị bounding box khắt khe tốt hơn |
+| **Precision** | `0.6067` | **`0.7852`** | `0.6239` | `0.7313` | **YOLO26s đạt Precision cao nhất (78.5%)**, ít báo ảo |
+| **Recall** | `0.5177` | `0.5191` | `0.5415` | **`0.5663`** | RT-DETR-L bao quát tốt nhất, hạn chế bỏ sót |
+| **F1-Score** | `0.5587` | `0.6250` | `0.5798` | **`0.6383`** | RT-DETR-L và YOLO26s dẫn đầu |
+| **Tốc độ (FPS, Batch=1)** | **`94.62 FPS`** | `92.26 FPS` | `38.55 FPS` | `21.09 FPS` | **YOLO26n/s nhanh gấp 4.5 lần RT-DETR!** |
+| **Độ trễ trung bình (Mean)** | **`10.57 ms`** | `10.84 ms` | `25.94 ms` | `47.41 ms` | YOLO26n/s tối ưu cực hạn cho Real-time Video |
+| **Độ trễ p95 (95th percentile)**| **`11.23 ms`** | `11.55 ms` | `26.36 ms` | `49.20 ms` | YOLO26n/s kiểm soát frame drop cực kỳ ổn định |
+| **Tiêu thụ GPU VRAM (Peak)**| **`156.12 MB`** | `376.15 MB` | `728.29 MB` | `1033.50 MB` | **YOLO26n tiết kiệm VRAM gần 7 lần so với RT-DETR** |
+| **Kích thước checkpoint** | **`5.14 MB`** | `19.38 MB` | `42.00 MB` | `63.18 MB` | YOLO26n siêu nhẹ (5MB), lý tưởng cho Edge Device |
+| **Số lượng tham số (Params)** | **`2.51 M`** | `9.95 M` | `21.79 M` | `32.82 M` | YOLO26n nhỏ hơn 13 lần so với RT-DETR-L |
 
 <p align="center">
-  <img src="docs/images/overall_metrics.png" width="48%" />
-  <img src="docs/images/accuracy_speed_tradeoff.png" width="48%" />
+  <img src="docs/images/overall_metrics.png" width="58%" />
+  <img src="docs/images/accuracy_speed_tradeoff.png" width="40%" />
 </p>
 
 <p align="center">
-  <img src="docs/images/gpu_memory.png" width="55%" />
-  <br><em>So sánh tiêu thụ GPU Memory (CUDA VRAM Peak) trong quá trình inference</em>
+  <img src="docs/images/gpu_memory.png" width="50%" />
+  <br><em>So sánh tiêu thụ bộ nhớ GPU (CUDA VRAM Peak) trong quá trình inference trên Tesla T4</em>
 </p>
 
 ---
@@ -237,43 +237,58 @@ Nhiều dự án công bố metric trên tập **Validation** (dễ đạt đi�
 
 ### 6.3. Phân tích chi tiết từng lớp & Hiện tượng Lệch nhãn (Class Imbalance)
 
-Số liệu chi tiết từ [`per_class_comparison.csv`](file:///D:/HOCsauvaufngdung/Day1/vn-traffic-yolo26-vs-rtdetr/kaggle_output/reports/per_class_comparison.csv):
+Số liệu chi tiết từ đánh giá trên tập **Test split độc lập (740 ảnh, 7,534 bounding boxes)**:
 
-| Lớp phương tiện | Số hộp trong tập Test | YOLO26s mAP50 | YOLO26s mAP50-95 | RT-DETR mAP50 | RT-DETR mAP50-95 | Nhận xét phân tích |
-|:---|:---:|:---:|:---:|:---:|:---:|:---|
-| 🚒 **Xe cứu hỏa** | 113 | **94.0%** | **78.1%** | **95.9%** | **79.2%** | Đặc trưng màu sắc/hình dáng rõ ràng $\to$ mAP cực cao |
-| 🚗 **Xe hơi** | 2,021 | **88.1%** | **71.9%** | **88.6%** | **72.4%** | Dữ liệu dồi dào, phát hiện chuẩn xác |
-| 🚚 **Xe tải** | 321 | **81.8%** | **66.6%** | **85.2%** | **71.1%** | Kết quả phát hiện rất tốt |
-| 🚌 **Xe buýt** | 90 | **68.3%** | **54.6%** | **76.0%** | **63.2%** | RT-DETR bao quát tốt hơn ở đối tượng lớn |
-| 🛵 **Xe máy** | 4,875 | **78.7%** | **37.0%** | **82.0%** | **44.9%** | mAP50 cao, mAP50-95 thấp do mật độ chen chúc |
-| 🚐 **Xe van** | 77 | 15.9% | 13.2% | 21.5% | 18.2% | Thường bị nhầm sang xe hơi hoặc xe tải nhỏ |
-| 🚲 **Xe đạp** | 35 | 0.02% | 0.01% | 0.23% | 0.16% | Thiếu dữ liệu (chỉ 0.46% tổng hộp), dễ nhầm xe máy |
-| 🚛 **Xe container** | **2** | 0.00% | 0.00% | 1.34% | 0.83% | **Cả tập test chỉ có đúng 2 hộp** $\to$ mAP rơi về 0 |
+| Lớp đối tượng | Hộp Test | YOLO26n mAP50 | YOLO26s mAP50 | YOLO26m mAP50 | RT-DETR-L mAP50 | YOLO26n mAP50-95 | YOLO26s mAP50-95 | YOLO26m mAP50-95 | RT-DETR-L mAP50-95 |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 🚌 **xe buyt (Bus)** | 90 | 67.0% | 68.3% | 71.3% | **76.0%** | 55.0% | 54.6% | 58.5% | **63.2%** |
+| 🚛 **xe container (Container)** | **2** | 0.0% | 0.0% | 0.0% | **1.3%** | 0.0% | 0.0% | 0.0% | **0.8%** |
+| 🚒 **xe cuu hoa (Fire Truck)** | 113 | 94.9% | 94.0% | 95.6% | **95.9%** | 77.3% | 78.1% | 78.7% | **79.2%** |
+| 🚲 **xe dap (Bicycle)** | 35 | 0.0% | 0.0% | **2.5%** | 0.2% | 0.0% | 0.0% | **1.5%** | 0.2% |
+| 🚗 **xe hoi (Car)** | 2,021 | 87.2% | 88.1% | 87.2% | **88.6%** | 70.8% | 71.9% | 70.9% | **72.4%** |
+| 🛵 **xe may (Motorbike)** | 4,875 | 78.1% | 78.7% | 77.1% | **82.0%** | 41.3% | 37.0% | 34.3% | **44.9%** |
+| 🚚 **xe tai (Truck)** | 321 | 85.0% | 81.8% | **85.6%** | 85.2% | 69.8% | 66.6% | 69.8% | **71.1%** |
+| 🚐 **xe van (Van)** | 77 | 8.3% | 15.9% | 8.7% | **21.5%** | 7.1% | 13.2% | 7.3% | **18.2%** |
 
 > [!WARNING]
 > **Giải thích khoa học về điểm số mAP**:
-> Công thức tính mAP là **Macro-Average** (chia đều trọng số $12.5\%$ cho mỗi lớp). Hai lớp thiếu mẫu nghiêm trọng (`xe container` và `xe dap`) kéo tụt mAP tổng thể của tập Test. Nếu tính trung bình trên các lớp có đủ dữ liệu (`xe cuu hoa`, `xe hoi`, `xe tai`, `xe buyt`, `xe may`), điểm **mAP50-95 thực tế đạt trên 62% – 66%**.
+> Công thức tính mAP là **Macro-Average** (chia đều trọng số $12.5\%$ cho mỗi lớp). Hai lớp thiếu mẫu nghiêm trọng (`xe container` chỉ có 2 hộp và `xe dap` chỉ có 35 hộp) kéo tụt mAP trung bình của toàn tập Test. Nếu xét trên 5 lớp phương tiện phổ biến nhất chiếm 98% giao thông (`xe cuu hoa`, `xe hoi`, `xe tai`, `xe buyt`, `xe may`), điểm **mAP50 đạt 82% – 86%** và **mAP50-95 đạt 62% – 66%**.
 
 ---
 
 ### 6.4. Đường cong huấn luyện & Ma trận nhầm lẫn
 
+#### Tiến trình huấn luyện (Losses & Metrics qua 50 epochs)
 <p align="center">
+  <img src="docs/images/yolo26n_training_results.png" width="48%" />
   <img src="docs/images/yolo26_training_results.png" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/yolo26m_training_results.png" width="48%" />
   <img src="docs/images/rtdetr_training_results.png" width="48%" />
-  <br><em>Tiến trình huấn luyện (Losses & Metrics qua 50 epochs): YOLO26s (trái) vs RT-DETR-L (phải)</em>
+  <br><em>Tiến trình huấn luyện 50 epochs: YOLO26n (trên trái), YOLO26s (trên phải), YOLO26m (dưới trái), RT-DETR-L (dưới phải)</em>
 </p>
 
+#### Ma trận nhầm lẫn chuẩn hóa (Normalized Confusion Matrix)
 <p align="center">
+  <img src="docs/images/yolo26n_confusion_matrix.png" width="48%" />
   <img src="docs/images/yolo26_confusion_matrix.png" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/yolo26m_confusion_matrix.png" width="48%" />
   <img src="docs/images/rtdetr_confusion_matrix.png" width="48%" />
-  <br><em>Ma trận nhầm lẫn chuẩn hóa (Normalized Confusion Matrix): YOLO26s (trái) vs RT-DETR-L (phải)</em>
+  <br><em>Confusion Matrix: YOLO26n (trên trái), YOLO26s (trên phải), YOLO26m (dưới trái), RT-DETR-L (dưới phải)</em>
 </p>
 
+#### Đường cong Precision-Recall toàn diện
 <p align="center">
+  <img src="docs/images/yolo26n_pr_curve.png" width="48%" />
   <img src="docs/images/yolo26_pr_curve.png" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/yolo26m_pr_curve.png" width="48%" />
   <img src="docs/images/rtdetr_pr_curve.png" width="48%" />
-  <br><em>Đường cong Precision-Recall toàn diện: YOLO26s (trái) vs RT-DETR-L (phải)</em>
+  <br><em>Đường cong Precision-Recall: YOLO26n (trên trái), YOLO26s (trên phải), YOLO26m (dưới trái), RT-DETR-L (dưới phải)</em>
 </p>
 
 ---

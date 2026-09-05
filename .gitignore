@@ -33,6 +33,8 @@ kaggle/
 scripts/
 **/kaggle_output/
 kaggle_output/
+**/kaggle_output_variants/
+kaggle_output_variants/
 **/kaggle_dataset/
 kaggle_dataset/
 **/kaggle_resume/
