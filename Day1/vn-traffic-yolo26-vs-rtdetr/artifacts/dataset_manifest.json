@@ -1,0 +1,8 @@
+{
+  "dataset": "Vietnam Vehicle Detection",
+  "workspace": "jinkun1998s-workspace",
+  "project": "vietnam-vehicle-detection-nt45b",
+  "version": 1,
+  "source_url": "https://universe.roboflow.com/jinkun1998s-workspace/vietnam-vehicle-detection-nt45b",
+  "data_yaml": "D:\\HOCsauvaufngdung\\vn-traffic-yolo26-vs-rtdetr-report\\data\\vietnam_vehicle_detection\\data.yaml"
+}

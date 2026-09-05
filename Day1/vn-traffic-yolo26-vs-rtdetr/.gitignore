@@ -1,0 +1,42 @@
+# Virtual environment
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Secrets & credentials
+.env
+.kaggle/
+
+# Datasets & big archives
+data/
+*.zip
+*.tar.gz
+
+# Checkpoints & model weights
+*.pt
+*.pth
+*.onnx
+*.engine
+runs/
+
+# Kaggle files (local execution only)
+kaggle/
+scripts/
+kaggle_output/
+kaggle_dataset/
+kaggle_resume/
+
+# Generated artifacts
+artifacts/predictions/
+artifacts/exports/
+artifacts/visualizations/
+artifacts/reports/*.csv
+artifacts/reports/*.json
+artifacts/reports/*.md

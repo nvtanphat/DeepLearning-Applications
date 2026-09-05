@@ -1,0 +1,53 @@
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+*.env*
+!.env.example
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Datasets and Archives
+**/data/
+data/
+*.zip
+*.tar.gz
+
+# Model Weights and Training Runs
+*.pt
+*.pth
+*.onnx
+*.engine
+**/runs/
+runs/
+
+# Kaggle files (Local execution only)
+**/kaggle/
+kaggle/
+**/scripts/
+scripts/
+**/kaggle_output/
+kaggle_output/
+**/kaggle_dataset/
+kaggle_dataset/
+**/kaggle_resume/
+kaggle_resume/
+
+# Generated Artifacts
+**/artifacts/predictions/
+**/artifacts/exports/
+**/artifacts/visualizations/
+**/artifacts/reports/*.csv
+**/artifacts/reports/*.json
+**/artifacts/reports/*.md
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
