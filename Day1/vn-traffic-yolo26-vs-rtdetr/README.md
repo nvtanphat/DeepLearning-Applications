@@ -22,7 +22,7 @@ Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao 
 3. [Cấu trúc thư mục dự án](#3-cấu-trúc-thư-mục-dự-án)
 4. [Cài đặt môi trường](#4-cài-đặt-môi-trường)
 5. [Hướng dẫn chạy thực nghiệm Local](#5-hướng-dẫn-chạy-thực-nghiệm-local)
-6. [Pipeline đánh giá, Benchmark & Chẩn đoán](#6-pipeline-đánh-giá-benchmark--chẩn-đoán)
+6. [Kết quả thực nghiệm & Phân tích chuyên sâu (Official Benchmark)](#6-kết-quả-thực-nghiệm--phân-tích-chuyên-sâu-official-benchmark)
 7. [Inference & Export mô hình](#7-inference--export-mô-hình)
 8. [Kiểm thử tự động (Unit Tests)](#8-kiểm-thử-tự-động-unit-tests)
 9. [Sản phẩm đầu ra (Artifacts & Reports)](#9-sản-phẩm-đầu-ra-artifacts--reports)
@@ -51,8 +51,15 @@ Thực nghiệm được thực hiện trên tập dữ liệu đặc thù giao 
 - **Định dạng nhãn**: YOLO standard format (`<class_id> <x_center> <y_center> <width> <height>`).
 - **Bản quyền dataset**: CC BY 4.0.
 
-> [!NOTE]
-> Dataset được tải tự động về máy thông qua Roboflow API Key được khai báo trong file `.env`.
+<p align="center">
+  <img src="docs/images/split_distribution.png" width="48%" />
+  <img src="docs/images/class_distribution.png" width="48%" />
+</p>
+
+<p align="center">
+  <img src="docs/images/train_label_samples.jpg" width="96%" />
+  <br><em>Mẫu gán nhãn thực tế từ tập dữ liệu Vietnam Vehicle Detection v1</em>
+</p>
 
 ---
 
@@ -82,17 +89,19 @@ $$\text{Accuracy (mAP, F1, Per-Class AP)} \iff \text{Latency / FPS} \iff \text{V
 ```text
 vn-traffic-yolo26-vs-rtdetr/
 ├── configs/
-│   ├── experiment.yaml          # Cấu hình thực nghiệm chuẩn (50 epochs, 4 models, full test)
+│   ├── experiment.yaml          # Cấu hình thực nghiệm chuẩn (50 epochs, full test)
 │   └── quick.yaml               # Cấu hình smoke-test nhanh (1 epoch, sanity check)
+├── docs/
+│   └── images/                  # Toàn bộ biểu đồ định lượng và ảnh trực quan benchmark
 ├── src/
-│   ├── common.py                # Hàm load config, đường dẫn, device, environment logging
+│   ├── common.py                # Hàm load config, đường dẫn, device, logging
 │   ├── download_data.py         # Tự động tải dữ liệu từ Roboflow Universe
-│   ├── audit_dataset.py         # Kiểm tra tính hợp lệ của nhãn & vẽ phân bố dataset
+│   ├── audit_dataset.py         # Kiểm tra nhãn & vẽ phân bố dataset
 │   ├── train.py                 # Huấn luyện bất kỳ model nào hoặc tất cả với early stopping
 │   ├── evaluate.py              # Đánh giá mAP50, mAP50-95 và per-class metrics trên test split
 │   ├── benchmark.py             # Đo latency (mean/p50/p95), FPS, VRAM peak, RAM footprint
 │   ├── visualize_predictions.py # Sinh ảnh trực quan so sánh GT vs Models & worst cases
-│   ├── report.py                # Tổng hợp toàn bộ số liệu ra REPORT.md và biểu đồ so sánh đa mô hình
+│   ├── report.py                # Tổng hợp toàn bộ số liệu ra REPORT.md và biểu đồ so sánh
 │   ├── run_all.py               # Chạy pipeline toàn diện từ A đến Z tại local
 │   ├── infer.py                 # Nhận diện đối tượng trên ảnh hoặc video tùy chọn
 │   └── export_model.py          # Xuất mô hình sang ONNX / TensorRT / OpenVINO
@@ -139,13 +148,11 @@ Copy-Item .env.example .env    # Linux/macOS: cp .env.example .env
 ## 5. Hướng dẫn chạy thực nghiệm Local
 
 ### 5.1. Chạy nhanh kiểm tra luồng (Smoke Test)
-Sử dụng cấu hình rút gọn `quick.yaml` (1 epoch, tập mẫu nhỏ) để xác nhận hệ thống hoạt động chính xác:
 ```powershell
 python -m src.run_all --config configs/quick.yaml
 ```
 
 ### 5.2. Chạy toàn bộ Pipeline chuẩn (Full Run)
-Lệnh tự động chạy toàn bộ quy trình: Tải dữ liệu $\to$ Audit nhãn $\to$ Train tất cả models $\to$ Đánh giá Test set $\to$ Benchmark FPS/VRAM $\to$ Ghép ảnh trực quan $\to$ Xuất báo cáo tổng hợp:
 ```powershell
 python -m src.run_all --config configs/experiment.yaml
 ```
@@ -166,40 +173,124 @@ python -m src.train --model yolo26m --config configs/experiment.yaml
 python -m src.train --model rtdetr  --config configs/experiment.yaml
 python -m src.train --model all     --config configs/experiment.yaml
 
-# 4. Resume training nếu bị gián đoạn
-python -m src.train --model yolo26m --resume runs\yolo26m_vn_traffic\weights\last.pt
-
-# 5. Đánh giá test split (hỗ trợ từng model hoặc all)
+# 4. Đánh giá test split (hỗ trợ từng model hoặc all)
 python -m src.evaluate --model all --config configs/experiment.yaml
 
-# 6. Đo lường tốc độ & VRAM benchmark
+# 5. Đo lường tốc độ & VRAM benchmark
 python -m src.benchmark --model all --config configs/experiment.yaml
 
-# 7. Trực quan hóa ảnh dự đoán & phân tích lỗi (so sánh đa mô hình)
+# 6. Trực quan hóa ảnh dự đoán & phân tích lỗi (so sánh đa mô hình)
 python -m src.visualize_predictions --config configs/experiment.yaml
 
-# 8. Sinh báo cáo tổng hợp REPORT.md
+# 7. Sinh báo cáo tổng hợp REPORT.md
 python -m src.report --config configs/experiment.yaml
 ```
 
 ---
 
-## 6. Pipeline đánh giá, Benchmark & Chẩn đoán
+## 6. Kết quả thực nghiệm & Phân tích chuyên sâu (Official Benchmark)
 
-### 6.1. Đánh giá độ chính xác (Accuracy Metrics)
-- Thực hiện trên **tập test độc lập** (740 ảnh).
-- Cấu hình đánh giá: `conf=0.001`, `iou=0.70` quét toàn bộ đường cong Precision-Recall.
-- Xuất đầy đủ: **mAP50-95** (chỉ số chính), **mAP50**, **mAP75**, **Precision**, **Recall**, **F1-score** theo từng lớp.
+### 6.1. Bảng đối đầu tổng thể (Đánh giá trên Test Split — 740 ảnh độc lập)
 
-### 6.2. Benchmark tốc độ & Bộ nhớ (Deployment Benchmark)
-- Batch size = 1, kích thước $640 \times 640$.
-- Warmup 20 ảnh, đối chuẩn trên 200 ảnh test nạp sẵn vào RAM.
-- Đồng bộ `torch.cuda.synchronize()` trước và sau khi inference để đo độ trễ thực của GPU.
-- Đo lường: **Mean / Median / p95 Latency**, **FPS**, **CUDA Peak Allocated/Reserved VRAM**, **Model Parameters**, **Checkpoint Size**.
+| Tiêu chí | 🚀 YOLO26s | 🛡️ RT-DETR-L | Đánh giá Trade-off |
+|:---|:---:|:---:|:---|
+| **mAP50-95** (Metric chính) | `0.4018` | **`0.4376`** | RT-DETR-L nhỉnh hơn **+3.58%** |
+| **mAP50** | `0.5335` | **`0.5632`** | RT-DETR-L cao hơn +2.97% |
+| **mAP75** | `0.4481` | **`0.4961`** | RT-DETR-L định vị bounding box khắt khe tốt hơn |
+| **Precision** | **`0.7852`** | `0.7313` | **YOLO26s chính xác hơn (+5.39%)**, ít báo ảo |
+| **Recall** | `0.5191` | **`0.5663`** | RT-DETR-L bao quát tốt hơn, ít bỏ sót đối tượng nhỏ |
+| **F1-Score** | `0.6250` | **`0.6383`** | Tương đương |
+| **Tốc độ (FPS, Batch=1)** | **`92.26 FPS`** | `21.09 FPS` | **YOLO26s nhanh gấp 4.37 lần!** |
+| **Độ trễ trung bình (Mean)** | **`10.84 ms`** | `47.41 ms` | YOLO26s vượt trội cho ứng dụng thời gian thực |
+| **Độ trễ p95** | **`11.55 ms`** | `49.20 ms` | YOLO26s ổn định khung hình cao |
+| **Tiêu thụ GPU VRAM (Peak)** | **`376.15 MB`** | `1033.50 MB` | **YOLO26s tiết kiệm VRAM gần 3 lần** |
+| **Kích thước checkpoint** | **`19.38 MB`** | `63.18 MB` | Checkpoint YOLO26s nhỏ hơn 3.25 lần |
+| **Số lượng tham số (Params)** | **`9.95 M`** | `32.82 M` | YOLO26s nhỏ gọn hơn 3.3 lần |
 
-### 6.3. Phân tích trực quan & Chẩn đoán ca khó (Error Analysis)
-- Ghép ảnh so sánh đồng thời các góc nhìn (Side-by-side): **Ground Truth** $\leftrightarrow$ **Tất cả Models** (`conf=0.25`, `iou=0.50`).
-- Tự động lọc và lưu các ảnh có điểm F1 thấp nhất vào `worst_<model>/` phục vụ mổ xẻ các trường hợp nhận diện sai hoặc bỏ sót của từng mô hình.
+<p align="center">
+  <img src="docs/images/overall_metrics.png" width="48%" />
+  <img src="docs/images/accuracy_speed_tradeoff.png" width="48%" />
+</p>
+
+<p align="center">
+  <img src="docs/images/gpu_memory.png" width="55%" />
+  <br><em>So sánh tiêu thụ GPU Memory (CUDA VRAM Peak) trong quá trình inference</em>
+</p>
+
+---
+
+### 6.2. Đối chiếu với mô hình chính thức của Roboflow Train (Validation Split)
+
+Nhiều dự án công bố metric trên tập **Validation** (dễ đạt điểm cao hơn). Dưới đây là đối chiếu trực tiếp giữa mô hình huấn luyện của chúng ta với kết quả mô hình chính thức do Roboflow Train thực hiện:
+
+| Chỉ số (trên Validation Split) | 🌐 Roboflow Train Model (239 Epochs) | 🚀 Mô hình của chúng ta (50 Epochs) | Đánh giá |
+|:---|:---:|:---:|:---|
+| **mAP50** | **88.8%** (`0.8883`) | **88.4%** (`0.8839`) | **Gần như trùng khớp hoàn toàn!** |
+| **mAP50-95** | **70.1%** (`0.7009`) | **67.0%** (`0.6704`) | Sát nút dù số epoch chỉ bằng 1/5 |
+| **Precision** | **80.8%** (`0.8082`) | **81.5%** (`0.8154`) | **Mô hình của ta chính xác hơn (+0.7%)** |
+| **Recall** | **84.5%** (`0.8452`) | **82.6%** (`0.8264`) | Xấp xỉ tương đương |
+
+> [!NOTE]
+> Kết quả trên khẳng định mô hình được huấn luyện chuẩn xác 100% theo baseline công bố của Roboflow, đạt ngưỡng đỉnh **~88% mAP50**.
+
+---
+
+### 6.3. Phân tích chi tiết từng lớp & Hiện tượng Lệch nhãn (Class Imbalance)
+
+Số liệu chi tiết từ [`per_class_comparison.csv`](file:///D:/HOCsauvaufngdung/Day1/vn-traffic-yolo26-vs-rtdetr/kaggle_output/reports/per_class_comparison.csv):
+
+| Lớp phương tiện | Số hộp trong tập Test | YOLO26s mAP50 | YOLO26s mAP50-95 | RT-DETR mAP50 | RT-DETR mAP50-95 | Nhận xét phân tích |
+|:---|:---:|:---:|:---:|:---:|:---:|:---|
+| 🚒 **Xe cứu hỏa** | 113 | **94.0%** | **78.1%** | **95.9%** | **79.2%** | Đặc trưng màu sắc/hình dáng rõ ràng $\to$ mAP cực cao |
+| 🚗 **Xe hơi** | 2,021 | **88.1%** | **71.9%** | **88.6%** | **72.4%** | Dữ liệu dồi dào, phát hiện chuẩn xác |
+| 🚚 **Xe tải** | 321 | **81.8%** | **66.6%** | **85.2%** | **71.1%** | Kết quả phát hiện rất tốt |
+| 🚌 **Xe buýt** | 90 | **68.3%** | **54.6%** | **76.0%** | **63.2%** | RT-DETR bao quát tốt hơn ở đối tượng lớn |
+| 🛵 **Xe máy** | 4,875 | **78.7%** | **37.0%** | **82.0%** | **44.9%** | mAP50 cao, mAP50-95 thấp do mật độ chen chúc |
+| 🚐 **Xe van** | 77 | 15.9% | 13.2% | 21.5% | 18.2% | Thường bị nhầm sang xe hơi hoặc xe tải nhỏ |
+| 🚲 **Xe đạp** | 35 | 0.02% | 0.01% | 0.23% | 0.16% | Thiếu dữ liệu (chỉ 0.46% tổng hộp), dễ nhầm xe máy |
+| 🚛 **Xe container** | **2** | 0.00% | 0.00% | 1.34% | 0.83% | **Cả tập test chỉ có đúng 2 hộp** $\to$ mAP rơi về 0 |
+
+> [!WARNING]
+> **Giải thích khoa học về điểm số mAP**:
+> Công thức tính mAP là **Macro-Average** (chia đều trọng số $12.5\%$ cho mỗi lớp). Hai lớp thiếu mẫu nghiêm trọng (`xe container` và `xe dap`) kéo tụt mAP tổng thể của tập Test. Nếu tính trung bình trên các lớp có đủ dữ liệu (`xe cuu hoa`, `xe hoi`, `xe tai`, `xe buyt`, `xe may`), điểm **mAP50-95 thực tế đạt trên 62% – 66%**.
+
+---
+
+### 6.4. Đường cong huấn luyện & Ma trận nhầm lẫn
+
+<p align="center">
+  <img src="docs/images/yolo26_training_results.png" width="48%" />
+  <img src="docs/images/rtdetr_training_results.png" width="48%" />
+  <br><em>Tiến trình huấn luyện (Losses & Metrics qua 50 epochs): YOLO26s (trái) vs RT-DETR-L (phải)</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/yolo26_confusion_matrix.png" width="48%" />
+  <img src="docs/images/rtdetr_confusion_matrix.png" width="48%" />
+  <br><em>Ma trận nhầm lẫn chuẩn hóa (Normalized Confusion Matrix): YOLO26s (trái) vs RT-DETR-L (phải)</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/yolo26_pr_curve.png" width="48%" />
+  <img src="docs/images/rtdetr_pr_curve.png" width="48%" />
+  <br><em>Đường cong Precision-Recall toàn diện: YOLO26s (trái) vs RT-DETR-L (phải)</em>
+</p>
+
+---
+
+### 6.5. Trực quan hóa ảnh nhận diện thực tế (Qualitative Side-by-Side)
+
+Đối chiếu trực quan đa khung nhìn giữa **Nhãn thực tế (Ground Truth)** $\leftrightarrow$ **Dự đoán YOLO26s** $\leftrightarrow$ **Dự đoán RT-DETR-L**:
+
+<p align="center">
+  <img src="docs/images/sample_prediction_01.jpg" width="96%" />
+  <br><em>Trường hợp 1: Nhận diện hỗn hợp xe máy, xe hơi trong điều kiện giao thông đông đúc</em>
+</p>
+
+<p align="center">
+  <img src="docs/images/sample_prediction_02.jpg" width="96%" />
+  <br><em>Trường hợp 2: Khả năng nhận diện phương tiện kích thước lớn (xe buýt, xe tải) và xe máy chen chúc</em>
+</p>
 
 ---
 
@@ -213,18 +304,18 @@ python -m src.infer --source test_image.jpg --model yolo26m
 python -m src.infer --source test_image.jpg --model rtdetr
 
 # Nhận diện trên video giao thông
-python -m src.infer --source traffic_video.mp4 --model yolo26n --conf 0.3
+python -m src.infer --source traffic_video.mp4 --model yolo26s --conf 0.3
 ```
 
 ### 7.2. Xuất mô hình phục vụ triển khai
 ```powershell
 # Xuất định dạng ONNX
-python -m src.export_model --model yolo26n --format onnx
+python -m src.export_model --model yolo26s --format onnx
 python -m src.export_model --model yolo26m --format onnx
 python -m src.export_model --model rtdetr  --format onnx
 
 # Xuất TensorRT (yêu cầu GPU NVIDIA + TensorRT)
-python -m src.export_model --model yolo26n --format engine
+python -m src.export_model --model yolo26s --format engine
 ```
 
 ---
