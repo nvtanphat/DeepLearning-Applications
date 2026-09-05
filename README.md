@@ -18,22 +18,7 @@ Kho lưu trữ các bài thực hành, nghiên cứu thực nghiệm và đồ �
 | **Day 1** | [**Vietnam Vehicle Detection — YOLO26 vs RT-DETR-L**](Day1/vn-traffic-yolo26-vs-rtdetr) | **Vietnam Vehicle Detection**: Đối đầu thực nghiệm phát hiện phương tiện giao thông giữa họ YOLO26 (Nano/Small/Medium) và RT-DETR-L trên điều kiện thực tế Việt Nam. Đo đạc đa chiều Trade-off (mAP, FPS, VRAM, Params). | <kbd>✅ Hoàn thành</kbd> |
 | **Day 2** | *Đang cập nhật...* | *Bài toán tiếp theo trong chuỗi Deep Learning Applications.* | <kbd>⏳ Sắp ra mắt</kbd> |
 
----
-
-## 🌟 Điểm nhấn kết quả nổi bật — Day 1 Benchmark
-
-Đối đầu 4 mô hình trên tập **Test Split độc lập (740 ảnh phương tiện giao thông Việt Nam)** chạy trên GPU Nvidia Tesla T4:
-
-| Mô hình | Phân khúc | Params | Checkpoint | VRAM Peak | Tốc độ (FPS) | mAP@50 | mAP@50:95 |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| ⚡ **YOLO26n** | Edge AI / Embedded | **2.51 M** | **5.14 MB** | **156 MB** | **94.62 FPS** | `52.57%` | `40.15%` |
-| 🚀 **YOLO26s** | Real-time CCTV | 9.95 M | 19.38 MB | 376 MB | 92.26 FPS | `53.35%` | `40.18%` |
-| 🏋️ **YOLO26m** | Balanced Accuracy | 21.79 M | 42.00 MB | 728 MB | 38.55 FPS | `53.50%` | `40.13%` |
-| 🛡️ **RT-DETR-L** | Transformer Server | 32.82 M | 63.18 MB | 1034 MB | 21.09 FPS | **`56.32%`** | **`43.76%`** |
-
-> 📌 *Tài liệu & Báo cáo chuyên sâu:*  
-> 👉 [**Day 1 Full Documentation & Benchmark Report 📑**](Day1/vn-traffic-yolo26-vs-rtdetr/README.md)  
-> 📄 [**Báo cáo nghiên cứu kiến trúc YOLO26 (19 trang PDF)**](Day1/Bao_cao_Nghien_cuu_YOLO26.pdf)
+> 📌 *Chi tiết bài toán, báo cáo thực nghiệm và kết quả benchmark của Day 1 xem tại: [Day 1 Documentation](Day1/vn-traffic-yolo26-vs-rtdetr/README.md) & [Báo cáo nghiên cứu PDF](Day1/Bao_cao_Nghien_cuu_YOLO26.pdf).*
 
 ---
 
